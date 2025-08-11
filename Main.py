@@ -283,7 +283,7 @@ first_model = load_first_model()
 sec_model = load_sec_model()
 
 # --- Preprocessing ---
-def preprocess_image(image_np, target_size=(320, 280)):
+def preprocess_image(image_np, target_size=(260, 260)):
     """Resizes, converts to RGB, and expands dimensions for model input."""
     image_resized = cv2.resize(image_np, target_size)
     image_rgb = cv2.cvtColor(image_resized, cv2.COLOR_BGR2RGB)
@@ -432,7 +432,7 @@ def handle_image_input(uploaded_bytes, method_name, cropper_key):
         st.info(get_text("crop_step_info"))
         cropped_img = st_cropper(
             img_pil,
-            aspect_ratio=(320, 280),
+            aspect_ratio=(260, 260),
             box_color='#0E778E',
             key=cropper_key
         )
