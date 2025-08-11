@@ -262,32 +262,38 @@ if 'current_input_method' not in st.session_state:
 @st.cache_resource
 def load_first_model():
     with st.spinner(get_text("loading_first_model")):
-        try:
             model = load_model(FIRST_MODEL_PATH)
             return model
-        except Exception as e:
-            st.error(get_text("failed_to_load_first_model", e, FIRST_MODEL_PATH))
-            st.stop()
 
 @st.cache_resource
 def load_sec_model():
     with st.spinner(get_text("loading_sec_model")):
-        try:
             model = load_model(SEC_MODEL_PATH)
             return model
-        except Exception as e:
-            st.error(get_text("failed_to_load_sec_model", e, SEC_MODEL_PATH))
-            st.stop()
 
 first_model = load_first_model()
 sec_model = load_sec_model()
 
 # --- Preprocessing ---
 def preprocess_image(image_np, target_size=(260, 260)):
-    """Resizes, converts to RGB, and expands dimensions for model input."""
+    """
+    Resize image to target_size (width, height), convert BGR to RGB,
+    normalize pixels to [0,1], and expand dims for batch.
+    
+    Returns numpy array with shape (1, height, width, 3).
+    """
+    # Resize image (cv2.resize expects (width, height))
     image_resized = cv2.resize(image_np, target_size)
+    
+    # Convert BGR (OpenCV default) to RGB
     image_rgb = cv2.cvtColor(image_resized, cv2.COLOR_BGR2RGB)
-    image_array = np.expand_dims(image_rgb.astype("float32"), axis=0)
+    
+    # Convert to float32 and normalize to [0,1]
+    image_norm = image_rgb.astype(np.float32) / 255.0
+    
+    # Expand dims to add batch size
+    image_array = np.expand_dims(image_norm, axis=0)
+    
     return image_array
 
 # --- Prediction Logic ---
