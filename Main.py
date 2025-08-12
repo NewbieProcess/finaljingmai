@@ -168,11 +168,16 @@ def get_text(key, *args):
     return text
 
 def play_audio(file_path):
-    # อ่านไฟล์เสียงในโหมดไบนารี
-    with open(file_path, "rb") as audio_file:
-        audio_bytes = audio_file.read()
-    # ใช้ st.audio() เพื่อเล่นเสียงโดยตรง
-    st.audio(audio_bytes, format="audio/mp3", start_time=0)
+    with open(file_path, "rb") as f:
+        audio_bytes = f.read()
+        audio_b64 = base64.b64encode(audio_bytes).decode('utf-8')
+    audio_html = f"""
+    <audio autoplay="true">
+        <source src="data:audio/mp3;base64,{audio_b64}" type="audio/mp3">
+        Your browser does not support the audio element.
+    </audio>
+    """
+    st.markdown(audio_html, unsafe_allow_html=True)
 
 
 # --- Page Configuration ---
