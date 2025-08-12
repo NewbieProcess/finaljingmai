@@ -12,6 +12,9 @@ FIRST_CLASS_NAMES = ["Eye Detected", "No Eye Detected"]
 SEC_MODEL_PATH = "FinalJingMai.keras"
 SEC_CLASS_NAMES = ["Healthy", "Pinguecula", "Pterygium Stage 1 (Trace-Mild)", "Pterygium Stage 2 (Moderate-Severe)", "Red Eye(Conjunctivitis)"]
 
+@st.cache_resource
+model = load_model(FIRST_MODEL_PATH)
+model = load_model(SEC_MODEL_PATH)
 # Thresholds
 CONFIDENCE_THRESHOLD = 0.60
 MARGIN_THRESHOLD = 0.10
@@ -257,22 +260,6 @@ if 'img_for_prediction' not in st.session_state:
     st.session_state.img_for_prediction = None
 if 'current_input_method' not in st.session_state:
     st.session_state.current_input_method = "none"
-
-# --- Load Models (Cached) ---
-@st.cache_resource
-def load_first_model():
-    with st.spinner(get_text("loading_first_model")):
-            model = load_model(FIRST_MODEL_PATH)
-            return model
-
-@st.cache_resource
-def load_sec_model():
-    with st.spinner(get_text("loading_sec_model")):
-            model = load_model(SEC_MODEL_PATH)
-            return model
-
-first_model = load_first_model()
-sec_model = load_sec_model()
 
 # --- Preprocessing ---
 def preprocess_image(image_np, target_size=(260, 260)):
