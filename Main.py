@@ -11,6 +11,15 @@ FIRST_MODEL_PATH = "EyeDetect260x260.keras"
 FIRST_CLASS_NAMES = ["Eye Detected", "No Eye Detected"]
 SEC_MODEL_PATH = "FinalJingMai.keras"
 SEC_CLASS_NAMES = ["Healthy", "Pinguecula", "Pterygium Stage 1 (Trace-Mild)", "Pterygium Stage 2 (Moderate-Severe)", "Red Eye(Conjunctivitis)"]
+if len(img_gray.shape) == 2:
+    # ถ้าเป็น 2 มิติ (ขาวดำ) ให้เพิ่มมิติช่องสัญญาณและทำซ้ำ
+    img_gray = np.stack([img_gray, img_gray, img_gray], axis=-1)
+# img_gray ตอนนี้จะมีรูปร่างเป็น (height, width, 3)
+
+# หรืออีกวิธีหนึ่งโดยใช้ TensorFlow
+import tensorflow as tf
+# img_gray_tensor คือ Tensor ที่เป็นภาพขาวดำ
+img_rgb_tensor = tf.image.grayscale_to_rgb(img_gray_tensor)
 
 @st.cache_resource
 def load_first_model(path):
