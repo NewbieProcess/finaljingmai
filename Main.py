@@ -176,10 +176,26 @@ st.set_page_config(
 # --- Apply Custom CSS for a better look and feel ---
 st.markdown("""
 <style>
-/* Center the main header and add a professional look */
+/* Import a modern font that works well with both Thai and English */
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap');
+
+/* Apply font family to all elements */
+body, .stApp, h1, h2, h3, h4, h5, h6, p, .stButton>button {
+    font-family: 'Poppins', sans-serif;
+}
+
+/* Base colors for the UI */
+:root {
+    --primary-color: #2B6CB0; /* Royal Blue for accents */
+    --secondary-background-color: #F7F9FC; /* Light gray background for cards/tabs */
+    --button-color: #F5B041; /* Golden yellow for CTA buttons */
+    --text-dark: #0A2342; /* Deep blue for dark text */
+}
+
+/* Center the main header and use a darker color for a professional look */
 h1 {
     text-align: center;
-    color: var(--primary-color);
+    color: var(--text-dark);
     font-size: 3em;
     font-weight: 700;
 }
@@ -189,7 +205,7 @@ p {
 }
 /* This makes the divider a bit more visible in both themes */
 hr {
-    border-top: 1px solid var(--primary-color);
+    border-top: 1px solid var(--text-dark);
 }
 .stTabs [data-baseweb="tab-list"] {
     gap: 15px;
@@ -211,18 +227,19 @@ hr {
 }
 /* Style for the "Analyze" button */
 .stButton>button {
-    background-color: #FFC107;  /* แก้ไข: เปลี่ยนสีพื้นหลังปุ่มเป็นสีเหลืองอมส้ม */
-    color: black;              /* แก้ไข: เปลี่ยนสีฟอนต์เป็นสีดำเพื่อให้มองเห็นชัด */
+    background-color: var(--button-color);
+    color: var(--text-dark);
     font-size: 1.2em;
     font-weight: bold;
     border-radius: 8px;
     border: none;
     padding: 10px 20px;
     width: 100%;
+    transition: background-color 0.3s ease;
 }
 .stButton>button:hover {
-    background-color: #FFD54F;  /* เพิ่ม: สี Hover ให้เข้มขึ้นเล็กน้อย */
-    color: black;
+    background-color: #F8C45A;
+    color: var(--text-dark);
 }
 /* Custom styling for the "How to Use" steps */
 .step-container {
@@ -235,12 +252,13 @@ hr {
 }
 .step {
     text-align: center;
-    padding: 15px;
-    border: 1px solid var(--secondary-background-color);
-    border-radius: 10px;
+    padding: 20px;
+    border-radius: 12px; /* Smoother corners */
     background-color: #405973;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Add a subtle shadow for depth */
     flex: 1;
     min-width: 250px;
+    color: white; /* Ensure text is white for contrast */
 }
 .step h3 {
     color: white;
