@@ -5,6 +5,7 @@ import tensorflow as tf
 from tensorflow.keras.models import load_model
 from streamlit_cropper import st_cropper
 from PIL import Image
+import base64
 
 # --- Constants ---
 FIRST_MODEL_PATH = "EyeDetect.keras"
@@ -87,9 +88,9 @@ TEXTS = {
         """,
         "red_eye_consult_doctor": "⚠️ **Please consult a healthcare professional or ophthalmologist:** To determine the cause of the redness and receive appropriate treatment.",
         "initial_message": "Upload or capture an image in **Step 1** above, then crop it in **Step 2**. The analysis button will appear here once ready!",
-        "loading_first_model": "🚀 กำลังโหลดโมเดล AI สำหรับตรวจจับดวงตา...",
-        "loading_sec_model": "🧠 กำลังโหลดโมเดล AI สำหรับวิเคราะห์สภาพตา...",
-        "analyzing_image": "กำลังวิเคราะห์รูปภาพ... กรุณารอสักครู่ครับ",
+        "loading_first_model": "🚀 Loading AI model for eye detection...",
+        "loading_sec_model": "🧠 Loading AI model for eye condition analysis...",
+        "analyzing_image": "Analyzing image... Please wait. This may take a few moments.",
         "language_selector_label": "Select Language",
         "sidebar_settings_title": "Settings"
     },
@@ -153,7 +154,7 @@ TEXTS = {
         "loading_sec_model": "🧠 กำลังโหลดโมเดล AI สำหรับวิเคราะห์สภาพตา...",
         "analyzing_image": "กำลังวิเคราะห์รูปภาพ... กรุณารอสักครู่ครับ",
         "language_selector_label": "เลือกภาษา",
-        "sidebar_settings_title": "Settings"
+        "sidebar_settings_title": "ตั้งค่า"
     }
 }
 # --- Initialize session state for language ---
@@ -168,11 +169,19 @@ def get_text(key, *args):
     return text
 
 def play_audio(file_path):
-    # อ่านไฟล์เสียงในโหมดไบนารี
-    with open(file_path, "rb") as audio_file:
-        audio_bytes = audio_file.read()
-    # ใช้ st.audio() เพื่อเล่นเสียงโดยตรง
-    st.audio(audio_bytes, format="audio/mp3", start_time=0)
+    # อ่านไฟล์เสียงและแปลงเป็น base64
+    with open(file_path, "rb") as f:
+        audio_bytes = f.read()
+        audio_b64 = base64.b64encode(audio_bytes).decode('utf-8')
+
+    # ใช้ markdown เพื่อแทรกแท็ก audio ที่เล่นอัตโนมัติ
+    audio_html = f"""
+    <audio autoplay="true">
+        <source src="data:audio/mp3;base64,{audio_b64}" type="audio/mp3">
+        Your browser does not support the audio element.
+    </audio>
+    """
+    st.markdown(audio_html, unsafe_allow_html=True)
 
 
 # --- Page Configuration ---
@@ -368,7 +377,8 @@ def display_prediction_result(label, confidence, is_eye_detection=False):
             st.info(get_text("uncertain_advice"))
         elif "Healthy" in label:
             st.balloons()
-            play_audio(EFFECT_SOUND_PATH) # แก้ไขตรงนี้ให้เรียกใช้ฟังก์ชัน play_audio ที่ถูกปรับปรุงแล้ว
+            # เรียกใช้ฟังก์ชัน play_audio ที่ถูกแก้ไขแล้ว
+            play_audio(EFFECT_SOUND_PATH)
             st.success(get_text("healthy_success"))
             st.write(f"{get_text('confidence_label')} {confidence * 100:.2f}%")
             st.info(get_text("healthy_advice"))
@@ -470,8 +480,8 @@ def handle_image_input(uploaded_bytes, method_name, cropper_key):
         # Convert OpenCV's BGR to PIL's RGB
         img_pil = Image.fromarray(cv2.cvtColor(img_np_decoded, cv2.COLOR_BGR2RGB))
 
-        st.markdown("### ✂️ Step 2: Crop Your Image")
-        st.info("**Drag the box** to perfectly frame your eye. A precise crop leads to more accurate analysis.")
+        st.markdown(f"### {get_text('crop_step_title')}")
+        st.info(get_text("crop_step_info"))
         cropped_img = st_cropper(
             img_pil,
             aspect_ratio=(320, 280),
@@ -482,7 +492,7 @@ def handle_image_input(uploaded_bytes, method_name, cropper_key):
             # Update the image for prediction ONLY if the cropper provides a valid output
             st.session_state.img_for_prediction = cv2.cvtColor(np.array(cropped_img), cv2.COLOR_BGR2RGB) # Ensure RGB for further processing
             st.markdown("---")
-            st.image(cropped_img, caption="✅ Cropped Image Ready for Analysis", use_container_width=True)
+            st.image(cropped_img, caption=get_text("cropped_image_caption"), use_container_width=True)
             st.markdown("---")
         else:
             # If cropped_img is None (e.g., first render of cropper after new upload), ensure img_for_prediction is cleared
