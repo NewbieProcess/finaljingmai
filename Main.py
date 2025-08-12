@@ -7,7 +7,7 @@ from streamlit_cropper import st_cropper
 from PIL import Image
 
 # ... (Constants, Translation Data, etc. Unchanged) ...
-FIRST_MODEL_PATH = "EyeDetect260x260.keras"
+FIRST_MODEL_PATH = "EyeDetect1.h5"
 FIRST_CLASS_NAMES = ["Eye Detected", "No Eye Detected"]
 SEC_MODEL_PATH = "FinalJingMai.keras"
 SEC_CLASS_NAMES = ["Healthy", "Pinguecula", "Pterygium Stage 1 (Trace-Mild)", "Pterygium Stage 2 (Moderate-Severe)", "Red Eye(Conjunctivitis)"]
