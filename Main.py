@@ -13,8 +13,17 @@ SEC_MODEL_PATH = "FinalJingMai.keras"
 SEC_CLASS_NAMES = ["Healthy", "Pinguecula", "Pterygium Stage 1 (Trace-Mild)", "Pterygium Stage 2 (Moderate-Severe)", "Red Eye(Conjunctivitis)"]
 
 @st.cache_resource
-first_model = load_model(FIRST_MODEL_PATH)
-sec_model = load_model(SEC_MODEL_PATH)
+def load_first_model(path):
+    return load_model(path)
+
+# Load the second model
+@st.cache_resource
+def load_second_model(path):
+    return load_model(path)
+
+# Now you can call the functions to get the models
+first_model = load_first_model(FIRST_MODEL_PATH)
+second_model = load_second_model(SEC_MODEL_PATH)
 # Thresholds
 CONFIDENCE_THRESHOLD = 0.60
 MARGIN_THRESHOLD = 0.10
