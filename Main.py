@@ -12,7 +12,6 @@ FIRST_MODEL_PATH = "EyeDetect.keras"
 FIRST_CLASS_NAMES = ["Eye Detected", "No Eye Detected"]
 SEC_MODEL_PATH = "EyeAnalysis.keras"
 SEC_CLASS_NAMES = ["Healthy", "Pinguecula", "Pterygium Stage 1 (Trace-Mild)", "Pterygium Stage 2 (Moderate-Severe)", "Red Eye(Conjunctivitis)"]
-# เพิ่ม path ของไฟล์เสียง
 EFFECT_SOUND_PATH = "good-6081.mp3"
 
 # Thresholds
@@ -21,7 +20,7 @@ MARGIN_THRESHOLD = 0.10
 
 # --- Translation Data ---
 TEXTS = {
-    "en": {
+   "en": {
         "page_title": "Ocular scan ",
         "app_header": "OcuScanAI",
         "app_subheader": "Your intelligent assistant for preliminary eye health checks (Healthy, Pinguecula, Pterygium, Red Eye).",
