@@ -355,6 +355,10 @@ def predict_eye_condition(image_np):
 # --- Helper Function for Display ---
 def display_prediction_result(label, confidence, is_eye_detection=False):
     """Displays prediction results with appropriate styling and advice."""
+    # เมื่อมีการแสดงผลลัพธ์ที่เกี่ยวข้องกับสุขภาพตา
+    if not is_eye_detection:
+        play_audio(EFFECT_SOUND_PATH) # ย้ายมาไว้ตรงนี้
+    
     if is_eye_detection:
         if "No Eye" in label:
             st.error(get_text("no_eye_detected_error"))
@@ -368,7 +372,6 @@ def display_prediction_result(label, confidence, is_eye_detection=False):
             st.info(get_text("uncertain_advice"))
         elif "Healthy" in label:
             st.balloons()
-            play_audio(EFFECT_SOUND_PATH) # แก้ไขตรงนี้ให้เรียกใช้ฟังก์ชัน play_audio ที่ถูกปรับปรุงแล้ว
             st.success(get_text("healthy_success"))
             st.write(f"{get_text('confidence_label')} {confidence * 100:.2f}%")
             st.info(get_text("healthy_advice"))
