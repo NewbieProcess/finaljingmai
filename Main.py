@@ -14,11 +14,20 @@ SEC_CLASS_NAMES = ["Healthy", "Pinguecula", "Pterygium Stage 1 (Trace-Mild)", "P
 
 @st.cache_resource
 def load_first_model(path):
-    return load_model(path)
+    # กำหนด input_shape ให้ชัดเจน
+    model = load_model(path, compile=False) # load_model
+    # เพิ่ม input layer เพื่อให้แน่ใจว่าโมเดลรับ input ที่ถูกต้อง
+    model.build(input_shape=(None, 260, 260, 3))
+    return model
 
 @st.cache_resource
 def load_second_model(path):
-    return load_model(path)
+    # กำหนด input_shape ให้ชัดเจน
+    model = load_model(path, compile=False)
+    # เพิ่ม input layer เพื่อให้แน่ใจว่าโมเดลรับ input ที่ถูกต้อง
+    model.build(input_shape=(None, 260, 260, 3))
+    return model
+
 
 first_model = load_first_model(FIRST_MODEL_PATH)
 second_model = load_second_model(SEC_MODEL_PATH)
