@@ -1,31 +1,27 @@
 import streamlit as st
 import numpy as np
 import cv2
-import keras # เปลี่ยนจาก tensorflow.keras เป็น keras
-from keras.models import load_model # เปลี่ยนจาก tensorflow.keras เป็น keras
+import keras
+from keras.models import load_model
 from streamlit_cropper import st_cropper
 from PIL import Image
 
-# ... (Constants, Translation Data, etc. Unchanged) ...
-FIRST_MODEL_PATH = "EyeDetect1.keras"
+# --- Constants, Translation Data, etc. Unchanged ---
+FIRST_MODEL_PATH = "EyeDetect.keras"
 FIRST_CLASS_NAMES = ["Eye Detected", "No Eye Detected"]
-SEC_MODEL_PATH = "FinalJingMai.keras"
+SEC_MODEL_PATH = "EyeAnalysis.keras"
 SEC_CLASS_NAMES = ["Healthy", "Pinguecula", "Pterygium Stage 1 (Trace-Mild)", "Pterygium Stage 2 (Moderate-Severe)", "Red Eye(Conjunctivitis)"]
 
 @st.cache_resource
 def load_first_model(path):
-    # กำหนด input_shape ให้ชัดเจน
-    model = load_model(path, compile=False) # load_model
-    # เพิ่ม input layer เพื่อให้แน่ใจว่าโมเดลรับ input ที่ถูกต้อง
-    model.build(input_shape=(None, 260, 260, 3))
+    model = load_model(path, compile=False)
+    model.build(input_shape=(None, 280, 320, 3))
     return model
 
 @st.cache_resource
 def load_second_model(path):
-    # กำหนด input_shape ให้ชัดเจน
     model = load_model(path, compile=False)
-    # เพิ่ม input layer เพื่อให้แน่ใจว่าโมเดลรับ input ที่ถูกต้อง
-    model.build(input_shape=(None, 260, 260, 3))
+    model.build(input_shape=(None, 280, 320, 3))
     return model
 
 
@@ -177,7 +173,7 @@ if 'language' not in st.session_state:
     st.session_state.language = 'en'
 
 def get_text(key, *args):
-    text = TEXTS[st.session_state.language].get(key, f"Translation Missing: {key}")
+    text = TEXTS.get(st.session_state.language, TEXTS['en']).get(key, f"Translation Missing: {key}")
     if args:
         return text.format(*args)
     return text
@@ -271,7 +267,7 @@ if 'current_input_method' not in st.session_state:
     st.session_state.current_input_method = "none"
 
 # --- Preprocessing ---
-def preprocess_image(image_np, target_size=(260, 260)):
+def preprocess_image(image_np, target_size=(320, 280)):
     # Resize the image
     image_resized = cv2.resize(image_np, target_size)
     
@@ -421,7 +417,7 @@ def handle_image_input(uploaded_bytes, method_name, cropper_key):
         st.info(get_text("crop_step_info"))
         cropped_img = st_cropper(
             img_pil,
-            aspect_ratio=(260, 260),
+            aspect_ratio=(320, 280), # แก้ไข: เปลี่ยน aspect_ratio เป็น (320, 280)
             box_color='#0E778E',
             key=cropper_key
         )
