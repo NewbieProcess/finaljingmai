@@ -166,6 +166,7 @@ def get_text(key, *args):
     return text
 
 # --- Page Configuration ---
+# --- Page Configuration ---
 st.set_page_config(
     page_title=get_text("page_title"),
     page_icon="👁️",
@@ -238,14 +239,18 @@ hr {
     padding: 15px;
     border: 1px solid var(--secondary-background-color);
     border-radius: 10px;
-    background-color: #405973;
+    background-color: #405973; /* แก้ไข: ใช้สีพื้นหลังตามที่ระบุ */
     flex: 1;
     min-width: 250px;
 }
 .step h3 {
-    color: var(--primary-color);
+    color: white; /* แก้ไข: กำหนดสีฟอนต์ h3 เป็นสีขาว */
     font-size: 1.2em;
     font-weight: bold;
+}
+/* เพิ่ม CSS สำหรับข้อความ p ใน step ให้เป็นสีขาว */
+.step p {
+    color: white; /* เพิ่ม: กำหนดสีฟอนต์ p เป็นสีขาว */
 }
 </style>
 """, unsafe_allow_html=True)
