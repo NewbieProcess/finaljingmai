@@ -13,8 +13,8 @@ SEC_MODEL_PATH = "FinalJingMai.keras"
 SEC_CLASS_NAMES = ["Healthy", "Pinguecula", "Pterygium Stage 1 (Trace-Mild)", "Pterygium Stage 2 (Moderate-Severe)", "Red Eye(Conjunctivitis)"]
 
 @st.cache_resource
-model = load_model(FIRST_MODEL_PATH)
-model = load_model(SEC_MODEL_PATH)
+first_model = load_model(FIRST_MODEL_PATH)
+sec_model = load_model(SEC_MODEL_PATH)
 # Thresholds
 CONFIDENCE_THRESHOLD = 0.60
 MARGIN_THRESHOLD = 0.10
