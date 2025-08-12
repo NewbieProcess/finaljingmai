@@ -11,7 +11,7 @@ FIRST_MODEL_PATH = "EyeDetect260x260.keras"
 FIRST_CLASS_NAMES = ["Eye Detected", "No Eye Detected"]
 SEC_MODEL_PATH = "FinalJingMai.keras"
 SEC_CLASS_NAMES = ["Healthy", "Pinguecula", "Pterygium Stage 1 (Trace-Mild)", "Pterygium Stage 2 (Moderate-Severe)", "Red Eye(Conjunctivitis)"]
-# --- Load models using st.cache_resource ---
+
 @st.cache_resource
 def load_first_model(path):
     return load_model(path)
