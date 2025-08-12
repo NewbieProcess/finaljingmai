@@ -5,6 +5,7 @@ import tensorflow as tf
 from tensorflow.keras.models import load_model
 from streamlit_cropper import st_cropper
 from PIL import Image
+import base64
 
 # --- Constants ---
 FIRST_MODEL_PATH = "EyeDetect.keras"
