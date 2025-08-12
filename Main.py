@@ -238,7 +238,7 @@ hr {
     padding: 15px;
     border: 1px solid var(--secondary-background-color);
     border-radius: 10px;
-    background-color: blue;
+    background-color: #405973;
     flex: 1;
     min-width: 250px;
 }
