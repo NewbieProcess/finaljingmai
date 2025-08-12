@@ -211,18 +211,24 @@ hr {
 }
 /* Style for the "Analyze" button */
 .stButton>button {
-    background-color: #FFC107;  /* แก้ไข: เปลี่ยนสีพื้นหลังปุ่มเป็นสีเหลืองอมส้ม */
-    color: black;              /* แก้ไข: เปลี่ยนสีฟอนต์เป็นสีดำเพื่อให้มองเห็นชัด */
+    background-color: #FFC107;
+    color: black;
     font-size: 1.2em;
     font-weight: bold;
     border-radius: 8px;
     border: none;
     padding: 10px 20px;
     width: 100%;
+    /* เพิ่ม: Box shadow และ transition สำหรับ animation */
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease;
 }
 .stButton>button:hover {
-    background-color: #FFD54F;  /* เพิ่ม: สี Hover ให้เข้มขึ้นเล็กน้อย */
+    background-color: #FFD54F;
     color: black;
+    /* เพิ่ม: Animation ขยับขึ้นเมื่อ hover */
+    transform: translateY(-2px);
+    box-shadow: 0 6px 8px rgba(0, 0, 0, 0.15);
 }
 /* Custom styling for the "How to Use" steps */
 .step-container {
@@ -241,6 +247,14 @@ hr {
     background-color: #405973;
     flex: 1;
     min-width: 250px;
+    /* เพิ่ม: Box shadow และ transition สำหรับ animation */
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease;
+}
+.step:hover {
+    /* เพิ่ม: Animation ขยับขึ้นเมื่อ hover */
+    transform: translateY(-5px);
+    box-shadow: 0 8px 12px rgba(0, 0, 0, 0.2);
 }
 .step h3 {
     color: white;
