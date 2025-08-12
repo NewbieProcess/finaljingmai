@@ -5,3 +5,4 @@ tensorflow==2.18.0
 protobuf==3.20.3
 Pillow==11.3.0
 streamlit-cropper==0.2.0
+keras==3.10.0
