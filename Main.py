@@ -182,6 +182,8 @@ h1 {
     color: var(--primary-color);
     font-size: 3em;
     font-weight: 700;
+    /* เพิ่ม: Animation สำหรับหัวข้อหลัก */
+    animation: fadeInDown 1s ease-in-out;
 }
 p {
     text-align: center;
@@ -263,6 +265,17 @@ hr {
 }
 .step p {
     color: white;
+}
+/* Keyframes สำหรับ Animation */
+@keyframes fadeInDown {
+    0% {
+        opacity: 0;
+        transform: translateY(-20px);
+    }
+    100% {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
 </style>
 """, unsafe_allow_html=True)
