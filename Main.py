@@ -6,17 +6,36 @@ from tensorflow.keras.models import load_model
 from streamlit_cropper import st_cropper
 from PIL import Image
 
-# --- Constants ---
-FIRST_MODEL_PATH = "EyeDetect.keras"
+# ... (Constants, Translation Data, etc. Unchanged) ...
+FIRST_MODEL_PATH = "EyeDetect260x260.keras"
 FIRST_CLASS_NAMES = ["Eye Detected", "No Eye Detected"]
-SEC_MODEL_PATH = "EyeAnalysis.keras"
+SEC_MODEL_PATH = "FinalJingMai.keras"
 SEC_CLASS_NAMES = ["Healthy", "Pinguecula", "Pterygium Stage 1 (Trace-Mild)", "Pterygium Stage 2 (Moderate-Severe)", "Red Eye(Conjunctivitis)"]
+
+@st.cache_resource
+def load_first_model(path):
+    # กำหนด input_shape ให้ชัดเจน
+    model = load_model(path, compile=False) # load_model
+    # เพิ่ม input layer เพื่อให้แน่ใจว่าโมเดลรับ input ที่ถูกต้อง
+    model.build(input_shape=(None, 260, 260, 3))
+    return model
+
+@st.cache_resource
+def load_second_model(path):
+    # กำหนด input_shape ให้ชัดเจน
+    model = load_model(path, compile=False)
+    # เพิ่ม input layer เพื่อให้แน่ใจว่าโมเดลรับ input ที่ถูกต้อง
+    model.build(input_shape=(None, 260, 260, 3))
+    return model
+
+
+first_model = load_first_model(FIRST_MODEL_PATH)
+second_model = load_second_model(SEC_MODEL_PATH)
 
 # Thresholds
 CONFIDENCE_THRESHOLD = 0.60
 MARGIN_THRESHOLD = 0.10
 
-# --- Translation Data ---
 TEXTS = {
     "en": {
         "page_title": "Ocular scan ",
@@ -152,28 +171,23 @@ TEXTS = {
     "analyzing_image": "กำลังวิเคราะห์รูปภาพ... กรุณารอสักครู่ครับ",
     "language_selector_label": "เลือกภาษา",
     "sidebar_settings_title": "ตั้งค่า"
-  }
+    }
 }
-# --- Initialize session state for language ---
 if 'language' not in st.session_state:
-    st.session_state.language = 'en' # Default to English
+    st.session_state.language = 'en'
 
 def get_text(key, *args):
-    """Retrieves translated text for a given key in the current language."""
     text = TEXTS[st.session_state.language].get(key, f"Translation Missing: {key}")
     if args:
         return text.format(*args)
     return text
 
-# --- Page Configuration ---
 st.set_page_config(
     page_title=get_text("page_title"),
     page_icon="👁️",
     layout="centered",
     initial_sidebar_state="auto"
 )
-
-# --- Apply Custom CSS for a better look and feel ---
 st.markdown("""
 <style>
 /* Center the main header and add a professional look */
@@ -249,8 +263,6 @@ hr {
 }
 </style>
 """, unsafe_allow_html=True)
-
-# --- Initialize session state for image management ---
 if 'img_raw_bytes' not in st.session_state:
     st.session_state.img_raw_bytes = None
 if 'img_for_prediction' not in st.session_state:
@@ -258,36 +270,21 @@ if 'img_for_prediction' not in st.session_state:
 if 'current_input_method' not in st.session_state:
     st.session_state.current_input_method = "none"
 
-# --- Load Models (Cached) ---
-@st.cache_resource
-def load_first_model():
-    with st.spinner(get_text("loading_first_model")):
-        try:
-            model = load_model(FIRST_MODEL_PATH)
-            return model
-        except Exception as e:
-            st.error(get_text("failed_to_load_first_model", e, FIRST_MODEL_PATH))
-            st.stop()
-
-@st.cache_resource
-def load_sec_model():
-    with st.spinner(get_text("loading_sec_model")):
-        try:
-            model = load_model(SEC_MODEL_PATH)
-            return model
-        except Exception as e:
-            st.error(get_text("failed_to_load_sec_model", e, SEC_MODEL_PATH))
-            st.stop()
-
-first_model = load_first_model()
-sec_model = load_sec_model()
-
 # --- Preprocessing ---
-def preprocess_image(image_np, target_size=(320, 280)):
-    """Resizes, converts to RGB, and expands dimensions for model input."""
+def preprocess_image(image_np, target_size=(260, 260)):
+    # Resize the image
     image_resized = cv2.resize(image_np, target_size)
+    
+    # The input image is already in BGR format from st_cropper logic
+    # so we can directly convert it to RGB
     image_rgb = cv2.cvtColor(image_resized, cv2.COLOR_BGR2RGB)
-    image_array = np.expand_dims(image_rgb.astype("float32"), axis=0)
+    
+    # Normalize pixel values
+    image_norm = image_rgb.astype(np.float32) / 255.0
+    
+    # Add batch dimension
+    image_array = np.expand_dims(image_norm, axis=0)
+    
     return image_array
 
 # --- Prediction Logic ---
@@ -306,7 +303,7 @@ def predict_eye_condition(image_np):
     if processed_image is None:
         return "Uncertain", 0.0
 
-    prediction = sec_model.predict(processed_image)[0]
+    prediction = second_model.predict(processed_image)[0]
     top_2 = np.sort(prediction)[-2:]
     confidence = top_2[-1]
     margin = top_2[-1] - top_2[-2]
@@ -318,7 +315,6 @@ def predict_eye_condition(image_np):
 
 # --- Helper Function for Display ---
 def display_prediction_result(label, confidence, is_eye_detection=False):
-    """Displays prediction results with appropriate styling and advice."""
     if is_eye_detection:
         if "No Eye" in label:
             st.error(get_text("no_eye_detected_error"))
@@ -352,8 +348,6 @@ def display_prediction_result(label, confidence, is_eye_detection=False):
                 st.info(get_text("red_eye_consult_doctor"))
 
 # --- Streamlit UI ---
-
-# Sidebar for language selection
 with st.sidebar:
     st.title(get_text("sidebar_settings_title"))
     language_options = {
@@ -371,12 +365,10 @@ with st.sidebar:
         st.session_state.language = selected_lang_key
         st.rerun()
 
-# Header Section
 st.markdown(f"<h1>👀 {get_text('app_header')}</h1>", unsafe_allow_html=True)
 st.markdown(f"<p>{get_text('app_subheader')}</p>", unsafe_allow_html=True)
 st.markdown("---")
 
-# Welcome and "How to use" Section
 st.markdown(f"**{get_text('welcome_title')}** {get_text('welcome_message')}")
 st.divider()
 
@@ -407,9 +399,7 @@ st.info(get_text("tip_info"))
 
 tab1, tab2= st.tabs([get_text("tab_upload_image"), get_text("tab_use_camera")])
 
-# --- Function to handle image processing and cropping ---
 def handle_image_input(uploaded_bytes, method_name, cropper_key):
-    # Case 1: A new raw image is provided OR the input method has switched
     if (uploaded_bytes is not None and st.session_state.img_raw_bytes != uploaded_bytes) or \
        (st.session_state.current_input_method != method_name and uploaded_bytes is not None):
         st.session_state.img_raw_bytes = uploaded_bytes
@@ -417,7 +407,6 @@ def handle_image_input(uploaded_bytes, method_name, cropper_key):
         st.session_state.current_input_method = method_name
         st.rerun()
 
-    # Case 2: The input was explicitly cleared
     elif uploaded_bytes is None and st.session_state.current_input_method == method_name:
         if st.session_state.img_raw_bytes is not None:
             st.session_state.img_raw_bytes = None
@@ -432,19 +421,18 @@ def handle_image_input(uploaded_bytes, method_name, cropper_key):
         st.info(get_text("crop_step_info"))
         cropped_img = st_cropper(
             img_pil,
-            aspect_ratio=(320, 280),
+            aspect_ratio=(260, 260),
             box_color='#0E778E',
             key=cropper_key
         )
         if cropped_img:
-            st.session_state.img_for_prediction = cv2.cvtColor(np.array(cropped_img), cv2.COLOR_BGR2RGB)
+            st.session_state.img_for_prediction = cv2.cvtColor(np.array(cropped_img), cv2.COLOR_RGB2BGR)
             st.markdown("---")
             st.image(cropped_img, caption=get_text("cropped_image_caption"), use_container_width=True)
             st.markdown("---")
         else:
             st.session_state.img_for_prediction = None
 
-# --- Image Input & Cropping using Tabs ---
 with tab1:
     st.markdown(f"### {get_text('upload_section_title')}")
     st.markdown(get_text("upload_section_desc"))
@@ -468,7 +456,6 @@ with tab2:
 
 st.divider()
 
-# --- Prediction Button & Results ---
 if st.session_state.img_for_prediction is not None:
     st.markdown(f"### {get_text('analyze_step_title')}")
     st.info(get_text("analyze_step_info"))
