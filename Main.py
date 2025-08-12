@@ -166,7 +166,6 @@ def get_text(key, *args):
     return text
 
 # --- Page Configuration ---
-# --- Page Configuration ---
 st.set_page_config(
     page_title=get_text("page_title"),
     page_icon="👁️",
@@ -212,8 +211,8 @@ hr {
 }
 /* Style for the "Analyze" button */
 .stButton>button {
-    background-color: var(--primary-color);
-    color: var(--text-color);
+    background-color: #FFC107;  /* แก้ไข: เปลี่ยนสีพื้นหลังปุ่มเป็นสีเหลืองอมส้ม */
+    color: black;              /* แก้ไข: เปลี่ยนสีฟอนต์เป็นสีดำเพื่อให้มองเห็นชัด */
     font-size: 1.2em;
     font-weight: bold;
     border-radius: 8px;
@@ -222,8 +221,8 @@ hr {
     width: 100%;
 }
 .stButton>button:hover {
-    background-color: var(--secondary-background-color);
-    color: var(--primary-color);
+    background-color: #FFD54F;  /* เพิ่ม: สี Hover ให้เข้มขึ้นเล็กน้อย */
+    color: black;
 }
 /* Custom styling for the "How to Use" steps */
 .step-container {
@@ -239,18 +238,17 @@ hr {
     padding: 15px;
     border: 1px solid var(--secondary-background-color);
     border-radius: 10px;
-    background-color: #405973; /* แก้ไข: ใช้สีพื้นหลังตามที่ระบุ */
+    background-color: #405973;
     flex: 1;
     min-width: 250px;
 }
 .step h3 {
-    color: white; /* แก้ไข: กำหนดสีฟอนต์ h3 เป็นสีขาว */
+    color: white;
     font-size: 1.2em;
     font-weight: bold;
 }
-/* เพิ่ม CSS สำหรับข้อความ p ใน step ให้เป็นสีขาว */
 .step p {
-    color: white; /* เพิ่ม: กำหนดสีฟอนต์ p เป็นสีขาว */
+    color: white;
 }
 </style>
 """, unsafe_allow_html=True)
