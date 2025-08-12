@@ -87,9 +87,9 @@ TEXTS = {
         """,
         "red_eye_consult_doctor": "⚠️ **Please consult a healthcare professional or ophthalmologist:** To determine the cause of the redness and receive appropriate treatment.",
         "initial_message": "Upload or capture an image in **Step 1** above, then crop it in **Step 2**. The analysis button will appear here once ready!",
-        "loading_first_model": "🚀 Loading AI model for eye detection...",
-        "loading_sec_model": "🧠 Loading AI model for eye condition analysis...",
-        "analyzing_image": "Analyzing image... Please wait. This may take a few moments.",
+        "loading_first_model": "🚀 กำลังโหลดโมเดล AI สำหรับตรวจจับดวงตา...",
+        "loading_sec_model": "🧠 กำลังโหลดโมเดล AI สำหรับวิเคราะห์สภาพตา...",
+        "analyzing_image": "กำลังวิเคราะห์รูปภาพ... กรุณารอสักครู่ครับ",
         "language_selector_label": "Select Language",
         "sidebar_settings_title": "Settings"
     },
@@ -153,7 +153,7 @@ TEXTS = {
         "loading_sec_model": "🧠 กำลังโหลดโมเดล AI สำหรับวิเคราะห์สภาพตา...",
         "analyzing_image": "กำลังวิเคราะห์รูปภาพ... กรุณารอสักครู่ครับ",
         "language_selector_label": "เลือกภาษา",
-        "sidebar_settings_title": "ตั้งค่า"
+        "sidebar_settings_title": "Settings"
     }
 }
 # --- Initialize session state for language ---
@@ -168,7 +168,11 @@ def get_text(key, *args):
     return text
 
 def play_audio(file_path):
-    st.markdown(f'<audio src="{file_path}" autoplay="true"></audio>', unsafe_allow_html=True)
+    # อ่านไฟล์เสียงในโหมดไบนารี
+    with open(file_path, "rb") as audio_file:
+        audio_bytes = audio_file.read()
+    # ใช้ st.audio() เพื่อเล่นเสียงโดยตรง
+    st.audio(audio_bytes, format="audio/mp3", start_time=0)
 
 
 # --- Page Configuration ---
@@ -364,7 +368,7 @@ def display_prediction_result(label, confidence, is_eye_detection=False):
             st.info(get_text("uncertain_advice"))
         elif "Healthy" in label:
             st.balloons()
-            play_audio(EFFECT_SOUND_PATH) # เพิ่มส่วนนี้เพื่อเล่นเสียงเมื่อผลลัพธ์เป็น Healthy
+            play_audio(EFFECT_SOUND_PATH) # แก้ไขตรงนี้ให้เรียกใช้ฟังก์ชัน play_audio ที่ถูกปรับปรุงแล้ว
             st.success(get_text("healthy_success"))
             st.write(f"{get_text('confidence_label')} {confidence * 100:.2f}%")
             st.info(get_text("healthy_advice"))
