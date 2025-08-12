@@ -20,7 +20,7 @@ MARGIN_THRESHOLD = 0.10
 
 # --- Translation Data ---
 TEXTS = {
-    "en": {
+ "en": {
         "page_title": "Ocular scan ",
         "app_header": "OcuScanAI",
         "app_subheader": "Your intelligent assistant for preliminary eye health checks (Healthy, Pinguecula, Pterygium, Red Eye).",
